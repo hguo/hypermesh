@@ -11,5 +11,9 @@ The library is still under development.  Stay tuned.
 
 ## Supported Mesh Types
 
-* Regular grid mesh that consists of hypercubes in arbitrary dimensions
-* Tessellated regular grid mesh that consists of simplices in arbitrary dimensions
+* Regular grid mesh that consists of *n*-cubes in arbitrary dimensions
+* Tessellated regular grid mesh that consists of *n*-simplices in arbitrary dimensions
+* (TODO) Unstructured *n*-simplex mesh in arbitrary dimensions
+* (TODO) *n*-simplex-*m*-prism mesh in arbitrary dimensions, e.g.
+  * 2-simplex-1-prism mesh that generalizes given triangular mesh into 3D
+  * 3-simplex-1-prism mesh that generalize given tetrahedral mesh into 4D
