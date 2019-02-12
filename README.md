@@ -1,7 +1,6 @@
 # Hypermesh: Meshing The High-Dimensional Spaces for Data Analysis and Visualization
 
-Hypermesh is a header-only C++17 library that meshes high-dimensional spaces for data analysis and visualization, such as feature extraction and tracking (see [https://github.com/hguo/ftk](FTK, the feature tracking kit)), flow map interpolation, and 
-topology analysis. 
+Hypermesh is a header-only C++17 library that meshes high-dimensional spaces for data analysis and visualization, such as feature extraction and tracking (see [FTK, the feature tracking kit](https://github.com/hguo/ftk)), flow map interpolation, and topology analysis. 
 
 The library is still under development.  Stay tuned. 
 
