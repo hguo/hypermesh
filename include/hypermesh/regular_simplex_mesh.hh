@@ -9,6 +9,8 @@
 #include <numeric>
 #include <cassert>
 
+namespace hypermesh {
+
 struct regular_simplex_mesh;
 
 struct regular_simplex_mesh_element {
@@ -46,6 +48,8 @@ struct regular_simplex_mesh {
   }
   int nd() const {return nd_;}
   int ntypes(int d) const {return ntypes_.at(d);}
+  int n(int d) const; // number of elements
+
   std::vector<std::vector<int>> unit_simplex(int d, int t) const {return unit_simplices[d][t];}
 
   void set_lb(const std::vector<int>& lb);
@@ -133,16 +137,22 @@ bool regular_simplex_mesh_element::operator==(const regular_simplex_mesh_element
 regular_simplex_mesh_element& regular_simplex_mesh_element::operator++() 
 {
   if (type + 1 >= m.ntypes(dim)) {
-    type = 0;
-    increase_corner();
+    if (corner == m.ub()) 
+      type ++; // the invalid type together with the ub encodes the end of elements
+    else {
+      type = 0;
+      increase_corner();
+    }
   } else type ++;
   return *this;
 }
   
 void regular_simplex_mesh_element::increase_corner(int d)
 {
-  if (corner[d] + 1 > m.ub(d)) 
+  if (corner[d] + 1 > m.ub(d)) {
+    corner[d] = 0;
     increase_corner(d + 1);
+  }
   else corner[d] ++;
 }
   
@@ -524,8 +534,11 @@ regular_simplex_mesh::iterator regular_simplex_mesh::element_end(int d)
 {
   regular_simplex_mesh_element e(*this, d);
   e.corner = ub();
-  e.type = ntypes(d) - 1;
+  // e.type = ntypes(d) - 1;
+  e.type = ntypes(d); // the invalid type id combines with the ub corner encodes the end.
   return e;
+}
+
 }
 
 #endif
