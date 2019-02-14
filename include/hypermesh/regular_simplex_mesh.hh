@@ -44,6 +44,10 @@ struct regular_simplex_mesh {
   typedef regular_simplex_mesh_element iterator;
 
   regular_simplex_mesh(int n) : nd_(n) {
+    for (int i = 0; i < n; i ++) {
+      lb_.push_back(0);
+      ub_.push_back(0);
+    }
     initialize_subdivision();
   }
   int nd() const {return nd_;}
