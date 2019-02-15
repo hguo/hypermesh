@@ -20,6 +20,7 @@ struct regular_simplex_mesh_element {
   regular_simplex_mesh_element(const regular_simplex_mesh &m, int d, 
       const std::vector<int>& corner, int type); 
 
+  regular_simplex_mesh_element& operator=(const regular_simplex_mesh_element& e);
   bool operator!=(const regular_simplex_mesh_element& e) const {return !(*this == e);}
   bool operator<(const regular_simplex_mesh_element& e) const;
   bool operator==(const regular_simplex_mesh_element& e) const;
@@ -113,32 +114,40 @@ private:
 
 
 //////////////////////////////////
-regular_simplex_mesh_element::regular_simplex_mesh_element(const regular_simplex_mesh &m_, int d_) 
+inline regular_simplex_mesh_element::regular_simplex_mesh_element(const regular_simplex_mesh &m_, int d_) 
   : m(m_), dim(d_), type(0) 
 {
   corner.resize(m.nd());
 }
 
-regular_simplex_mesh_element::regular_simplex_mesh_element(
+inline regular_simplex_mesh_element::regular_simplex_mesh_element(
     const regular_simplex_mesh &m_, int d_, 
     const std::vector<int>& corner_, int type_)
   : m(m_), corner(corner_), dim(d_), type(type_)
 {
 }
 
-bool regular_simplex_mesh_element::operator<(const regular_simplex_mesh_element& e) const
+inline regular_simplex_mesh_element& regular_simplex_mesh_element::operator=(const regular_simplex_mesh_element& e)
+{
+  corner = e.corner;
+  dim = e.dim;
+  type = e.type;
+  return *this;
+}
+
+inline bool regular_simplex_mesh_element::operator<(const regular_simplex_mesh_element& e) const
 {
   if (corner < e.corner) return true;
   else if (corner == e.corner) return type < e.type;
   else return false;
 }
 
-bool regular_simplex_mesh_element::operator==(const regular_simplex_mesh_element& e) const
+inline bool regular_simplex_mesh_element::operator==(const regular_simplex_mesh_element& e) const
 {
   return dim == e.dim && type == e.type && corner == e.corner;
 }
 
-regular_simplex_mesh_element& regular_simplex_mesh_element::operator++() 
+inline regular_simplex_mesh_element& regular_simplex_mesh_element::operator++() 
 {
   if (type + 1 >= m.ntypes(dim)) {
     if (corner == m.ub()) 
@@ -151,7 +160,7 @@ regular_simplex_mesh_element& regular_simplex_mesh_element::operator++()
   return *this;
 }
   
-void regular_simplex_mesh_element::increase_corner(int d)
+inline void regular_simplex_mesh_element::increase_corner(int d)
 {
   if (corner[d] + 1 > m.ub(d)) {
     corner[d] = 0;
@@ -160,7 +169,7 @@ void regular_simplex_mesh_element::increase_corner(int d)
   else corner[d] ++;
 }
   
-bool regular_simplex_mesh_element::valid() const {
+inline bool regular_simplex_mesh_element::valid() const {
   if (type < 0 || type >= m.ntypes(dim)) return false;
   else {
     auto my_vertices = vertices();
@@ -177,7 +186,7 @@ bool regular_simplex_mesh_element::valid() const {
   }
 }
 
-std::vector<std::vector<int> > regular_simplex_mesh_element::vertices() const
+inline std::vector<std::vector<int> > regular_simplex_mesh_element::vertices() const
 {
   std::vector<std::vector<int>> vertices;
 
@@ -192,7 +201,7 @@ std::vector<std::vector<int> > regular_simplex_mesh_element::vertices() const
   return vertices;
 }
   
-std::ostream& operator<<(std::ostream& os, const regular_simplex_mesh_element& e)
+inline std::ostream& operator<<(std::ostream& os, const regular_simplex_mesh_element& e)
 {
   os << "dim=" << e.dim << ",cornor={";
   for (size_t i = 0; i < e.m.nd(); i ++)
@@ -242,7 +251,7 @@ std::ostream& operator<<(std::ostream& os, const regular_simplex_mesh_element& e
   return os;
 }
 
-std::vector<regular_simplex_mesh_element> regular_simplex_mesh_element::sides() const
+inline std::vector<regular_simplex_mesh_element> regular_simplex_mesh_element::sides() const
 {
   const auto &unit_simplex_sides = m.unit_simplex_sides[dim][type];
   std::vector<regular_simplex_mesh_element> sides;
@@ -258,7 +267,7 @@ std::vector<regular_simplex_mesh_element> regular_simplex_mesh_element::sides() 
   return sides;
 }
 
-std::vector<regular_simplex_mesh_element> regular_simplex_mesh_element::side_of() const
+inline std::vector<regular_simplex_mesh_element> regular_simplex_mesh_element::side_of() const
 {
   const auto &unit_simplex_side_of = m.unit_simplex_side_of[dim][type];
   std::vector<regular_simplex_mesh_element> side_of;
@@ -274,7 +283,7 @@ std::vector<regular_simplex_mesh_element> regular_simplex_mesh_element::side_of(
   return side_of;
 }
 
-std::vector<std::vector<std::vector<int>>> regular_simplex_mesh::subdivide_unit_cube(int n)
+inline std::vector<std::vector<std::vector<int>>> regular_simplex_mesh::subdivide_unit_cube(int n)
 {
   std::vector<std::vector<std::vector<int>>> results;
   if (n == 1) {
@@ -309,7 +318,7 @@ std::vector<std::vector<std::vector<int>>> regular_simplex_mesh::subdivide_unit_
   return results;
 }
 
-std::tuple<std::vector<std::vector<int>>, std::vector<int>>
+inline std::tuple<std::vector<std::vector<int>>, std::vector<int>>
 regular_simplex_mesh::reduce_unit_simplex(const std::vector<std::vector<int>> &simplex_) const
 {
   auto simplex = simplex_;
@@ -339,39 +348,7 @@ regular_simplex_mesh::reduce_unit_simplex(const std::vector<std::vector<int>> &s
   return std::make_tuple(simplex, offset);
 }
 
-#if 0
-int regular_simplex_mesh::simplex_type(const std::vector<std::string>& vertices) const
-{
-  // TODO: improve performance by adding a lookup table
-  const int dim = vertices.size();
-  const auto &my_unit_simplices = unit_simplices[dim];
-
-  for (int i = 0; i < my_unit_simplices.size(); i ++) 
-    if (vertices == my_unit_simplices[i]) return i;
-
-  std::cerr << "FATAL: input vertices are:" << std::endl;
-  for (auto vertex : vertices)
-    std::cerr << vertex << "size=" << vertex.size() << std::endl;
-
-  assert(false); // here's the trouble if the corresponding simplex is not found...  This should not happen
-  return 0;
-}
-#endif
-
-#if 0
-bool regular_simplex_mesh::is_simplex_identical(const std::vector<std::string>& l, const std::vector<std::string>& r) const 
-{
-  if (l.size() != r.size()) return false;
-  else {
-    auto lhs = l, rhs = r;
-    for (size_t i = 0; i < l.size(); i ++)
-      if (lhs[i] != rhs[i]) return false;
-    return true;
-  }
-}
-#endif
-
-std::vector<std::vector<std::vector<int>>> regular_simplex_mesh::enumerate_unit_simplices(int n, int k)
+inline std::vector<std::vector<std::vector<int>>> regular_simplex_mesh::enumerate_unit_simplices(int n, int k)
 {
   std::set<std::vector<std::vector<int>>> results;
   if (n == k) {
@@ -400,7 +377,7 @@ std::vector<std::vector<std::vector<int>>> regular_simplex_mesh::enumerate_unit_
   return results1;
 }
 
-std::vector<std::tuple<int, std::vector<int>>> regular_simplex_mesh::enumerate_unit_simplex_side_of(int k, int type)
+inline std::vector<std::tuple<int, std::vector<int>>> regular_simplex_mesh::enumerate_unit_simplex_side_of(int k, int type)
 {
   std::vector<std::tuple<int, std::vector<int>>> side_of;
   if (k == nd()) return side_of;
@@ -443,7 +420,7 @@ std::vector<std::tuple<int, std::vector<int>>> regular_simplex_mesh::enumerate_u
   return side_of;
 }
 
-std::vector<std::tuple<int, std::vector<int>>> regular_simplex_mesh::enumerate_unit_simplex_sides(int k, int type)
+inline std::vector<std::tuple<int, std::vector<int>>> regular_simplex_mesh::enumerate_unit_simplex_sides(int k, int type)
 {
   std::vector<std::tuple<int, std::vector<int>>> sides;
   if (k == 0) return sides;
@@ -479,7 +456,7 @@ std::vector<std::tuple<int, std::vector<int>>> regular_simplex_mesh::enumerate_u
   return sides;
 }
 
-void regular_simplex_mesh::initialize_subdivision()
+inline void regular_simplex_mesh::initialize_subdivision()
 {
   ntypes_.resize(nd() + 1);
   unit_simplices.resize(nd() + 1);
@@ -513,28 +490,28 @@ void regular_simplex_mesh::initialize_subdivision()
   // enumerate_unit_simplex_side_of(0, 0);
 }
 
-void regular_simplex_mesh::set_lb(const std::vector<int>& b)
+inline void regular_simplex_mesh::set_lb(const std::vector<int>& b)
 {
   lb_.resize(nd());
   for (int i = 0; i < std::min(lb_.size(), b.size()); i ++)
     lb_[i] = b[i];
 }
 
-void regular_simplex_mesh::set_ub(const std::vector<int>& b)
+inline void regular_simplex_mesh::set_ub(const std::vector<int>& b)
 {
   ub_.resize(nd());
   for (int i = 0; i < std::min(ub_.size(), b.size()); i ++)
     ub_[i] = b[i];
 }
 
-regular_simplex_mesh::iterator regular_simplex_mesh::element_begin(int d)
+inline regular_simplex_mesh::iterator regular_simplex_mesh::element_begin(int d)
 {
   regular_simplex_mesh_element e(*this, d);
   e.corner = lb();
   return e;
 }
 
-regular_simplex_mesh::iterator regular_simplex_mesh::element_end(int d)
+inline regular_simplex_mesh::iterator regular_simplex_mesh::element_end(int d)
 {
   regular_simplex_mesh_element e(*this, d);
   e.corner = ub();
