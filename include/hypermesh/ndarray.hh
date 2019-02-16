@@ -1,12 +1,15 @@
 #ifndef _HYPERMESH_ARRAY_HH
 #define _HYPERMESH_ARRAY_HH
 
+#include <vector>
+#include <array>
+
 namespace hypermesh {
 
 template <int N, typename T, typename I=size_t>
-struct array {
-  array() {dims.fill(0); s.fill(0);}
-  array(const std::array<I, N> &dims) {resize(dims);}
+struct ndarray {
+  ndarray() {dims.fill(0); s.fill(0);}
+  ndarray(const std::array<I, N> &dims) {resize(dims);}
 
   const T* data() {return p.data();}
 
