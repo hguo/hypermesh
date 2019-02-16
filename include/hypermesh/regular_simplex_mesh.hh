@@ -32,6 +32,9 @@ struct regular_simplex_mesh_element {
   void increase_corner(int d=0);
   bool valid() const;
 
+  template <typename uint = uint64_t> uint to_integer() const;
+  template <typename uint = uint64_t> uint from_integer(uint i);
+
   std::vector<regular_simplex_mesh_element> sides() const;
   std::vector<regular_simplex_mesh_element> side_of() const;
 
@@ -168,7 +171,7 @@ inline void regular_simplex_mesh_element::increase_corner(int d)
   }
   else corner[d] ++;
 }
-  
+
 inline bool regular_simplex_mesh_element::valid() const {
   if (type < 0 || type >= m.ntypes(dim)) return false;
   else {
