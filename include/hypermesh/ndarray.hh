@@ -6,55 +6,72 @@
 
 namespace hypermesh {
 
-template <int N, typename T, typename I=size_t>
+template <typename T>
 struct ndarray {
-  ndarray() {dims.fill(0); s.fill(0);}
-  ndarray(const std::array<I, N> &dims) {resize(dims);}
+  ndarray() {}
+  ndarray(const std::vector<size_t> &dims) {reshape(dims);}
+
+  size_t nd() const {return dims.size();}
+  std::vector<size_t> shape() const {return dims;}
 
   const T* data() const {return p.data();}
   T* data() {return p.data();}
 
-  void resize(const std::array<I, N> &dims_) {
+  void reshape(const std::vector<size_t> &dims_) {
     dims = dims_;
-    for (I i = 0; i < N; i ++)
+    s.resize(dims.size());
+
+    for (size_t i = 0; i < nd(); i ++)
       if (i == 0) s[i] = 1;
       else s[i] = s[i-1]*dims[i-1];
-    p.resize(s[N-1]*dims[N-1]);
+
+    p.resize(s[nd()-1]*dims[nd()-1]);
   }
 
-  template <typename T1, typename I1>
-  void resize(const ndarray<N, T1, I1>& a) {
-    resize(a.dims);
-  }
-
-  I index(const std::array<I, N>& idx) const {
-    I i(idx[0]);
-    for (I j = 1; j < N; j ++)
+  size_t index(const std::vector<size_t>& idx) const {
+    size_t i(idx[0]);
+    for (size_t j = 1; j < nd(); j ++)
       i += idx[j] * s[j];
     return i;
   }
 
-  I& at(const std::array<I, N>& idx) {return p[index(idx)];}
-  const I& at(const std::array<I, N>& idx) const {return p[index(idx)];}
+  T& at(const std::vector<size_t>& idx) {return p[index(idx)];}
+  const T& at(const std::vector<size_t>& idx) const {return p[index(idx)];}
 
-  T& at(I i0) {return p[i0];}
-  T& at(I i0, I i1) {return p[i0+i1*s[1]];}
-  T& at(I i0, I i1, I i2) {return p[i0+i1*s[1]+i2*s[2]];}
-  T& at(I i0, I i1, I i2, I i3) {return p[i0+i1*s[1]+i2*s[2]+i3*s[3]];}
-  T& at(I i0, I i1, I i2, I i3, I i4) {return p[i0+i1*s[1]+i2*s[2]+i3*s[3]+i4*s[4]];}
-  T& at(I i0, I i1, I i2, I i3, I i4, I i5) {return p[i0+i1*s[1]+i2*s[2]+i3*s[3]+i4*s[4]+i5*s[5]];}
-  T& at(I i0, I i1, I i2, I i3, I i4, I i5, I i6) {return p[i0+i1*s[1]+i2*s[2]+i3*s[3]+i4*s[4]+i5*s[5]+i6*s[6]];}
+  T& at(size_t i0) {return p[i0];}
+  T& at(size_t i0, size_t i1) {return p[i0+i1*s[1]];}
+  T& at(size_t i0, size_t i1, size_t i2) {return p[i0+i1*s[1]+i2*s[2]];}
+  T& at(size_t i0, size_t i1, size_t i2, size_t i3) {return p[i0+i1*s[1]+i2*s[2]+i3*s[3]];}
+  T& at(size_t i0, size_t i1, size_t i2, size_t i3, size_t i4) {return p[i0+i1*s[1]+i2*s[2]+i3*s[3]+i4*s[4]];}
+  T& at(size_t i0, size_t i1, size_t i2, size_t i3, size_t i4, size_t i5) {return p[i0+i1*s[1]+i2*s[2]+i3*s[3]+i4*s[4]+i5*s[5]];}
+  T& at(size_t i0, size_t i1, size_t i2, size_t i3, size_t i4, size_t i5, size_t i6) {return p[i0+i1*s[1]+i2*s[2]+i3*s[3]+i4*s[4]+i5*s[5]+i6*s[6]];}
   
-  const T& at(I i0) const {return p[i0];}
-  const T& at(I i0, I i1) const {return p[i0+i1*s[1]];}
-  const T& at(I i0, I i1, I i2) const {return p[i0+i1*s[1]+i2*s[2]];}
-  const T& at(I i0, I i1, I i2, I i3) const {return p[i0+i1*s[1]+i2*s[2]+i3*s[3]];}
-  const T& at(I i0, I i1, I i2, I i3, I i4) const {return p[i0+i1*s[1]+i2*s[2]+i3*s[3]+i4*s[4]];}
-  const T& at(I i0, I i1, I i2, I i3, I i4, I i5) const {return p[i0+i1*s[1]+i2*s[2]+i3*s[3]+i4*s[4]+i5*s[5]];}
-  const T& at(I i0, I i1, I i2, I i3, I i4, I i5, I i6) const {return p[i0+i1*s[1]+i2*s[2]+i3*s[3]+i4*s[4]+i5*s[5]+i6*s[6]];}
+  const T& at(size_t i0) const {return p[i0];}
+  const T& at(size_t i0, size_t i1) const {return p[i0+i1*s[1]];}
+  const T& at(size_t i0, size_t i1, size_t i2) const {return p[i0+i1*s[1]+i2*s[2]];}
+  const T& at(size_t i0, size_t i1, size_t i2, size_t i3) const {return p[i0+i1*s[1]+i2*s[2]+i3*s[3]];}
+  const T& at(size_t i0, size_t i1, size_t i2, size_t i3, size_t i4) const {return p[i0+i1*s[1]+i2*s[2]+i3*s[3]+i4*s[4]];}
+  const T& at(size_t i0, size_t i1, size_t i2, size_t i3, size_t i4, size_t i5) const {return p[i0+i1*s[1]+i2*s[2]+i3*s[3]+i4*s[4]+i5*s[5]];}
+  const T& at(size_t i0, size_t i1, size_t i2, size_t i3, size_t i4, size_t i5, size_t i6) const {return p[i0+i1*s[1]+i2*s[2]+i3*s[3]+i4*s[4]+i5*s[5]+i6*s[6]];}
+  
+  T& operator()(size_t i0) {return p[i0];}
+  T& operator()(size_t i0, size_t i1) {return p[i0+i1*s[1]];}
+  T& operator()(size_t i0, size_t i1, size_t i2) {return p[i0+i1*s[1]+i2*s[2]];}
+  T& operator()(size_t i0, size_t i1, size_t i2, size_t i3) {return p[i0+i1*s[1]+i2*s[2]+i3*s[3]];}
+  T& operator()(size_t i0, size_t i1, size_t i2, size_t i3, size_t i4) {return p[i0+i1*s[1]+i2*s[2]+i3*s[3]+i4*s[4]];}
+  T& operator()(size_t i0, size_t i1, size_t i2, size_t i3, size_t i4, size_t i5) {return p[i0+i1*s[1]+i2*s[2]+i3*s[3]+i4*s[4]+i5*s[5]];}
+  T& operator()(size_t i0, size_t i1, size_t i2, size_t i3, size_t i4, size_t i5, size_t i6) {return p[i0+i1*s[1]+i2*s[2]+i3*s[3]+i4*s[4]+i5*s[5]+i6*s[6]];}
+  
+  const T& operator()(size_t i0) const {return p[i0];}
+  const T& operator()(size_t i0, size_t i1) const {return p[i0+i1*s[1]];}
+  const T& operator()(size_t i0, size_t i1, size_t i2) const {return p[i0+i1*s[1]+i2*s[2]];}
+  const T& operator()(size_t i0, size_t i1, size_t i2, size_t i3) const {return p[i0+i1*s[1]+i2*s[2]+i3*s[3]];}
+  const T& operator()(size_t i0, size_t i1, size_t i2, size_t i3, size_t i4) const {return p[i0+i1*s[1]+i2*s[2]+i3*s[3]+i4*s[4]];}
+  const T& operator()(size_t i0, size_t i1, size_t i2, size_t i3, size_t i4, size_t i5) const {return p[i0+i1*s[1]+i2*s[2]+i3*s[3]+i4*s[4]+i5*s[5]];}
+  const T& operator()(size_t i0, size_t i1, size_t i2, size_t i3, size_t i4, size_t i5, size_t i6) const {return p[i0+i1*s[1]+i2*s[2]+i3*s[3]+i4*s[4]+i5*s[5]+i6*s[6]];}
 
-public:
-  std::array<I, N> dims, s;
+private:
+  std::vector<size_t> dims, s;
   std::vector<T> p;
 };
 

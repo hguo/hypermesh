@@ -32,6 +32,9 @@ struct regular_simplex_mesh_element {
   void increase_corner(int d=0);
   bool valid() const;
 
+  template <int nd> std::tuple<std::array<int, nd>, int> to_index() const;
+  template <int nd> void from_index(const std::tuple<std::array<int, nd>, int>&);
+
   template <typename uint = uint64_t> uint to_integer() const;
   template <typename uint = uint64_t> uint from_integer(uint i);
 
@@ -60,8 +63,7 @@ struct regular_simplex_mesh {
 
   std::vector<std::vector<int>> unit_simplex(int d, int t) const {return unit_simplices[d][t];}
 
-  void set_lb(const std::vector<int>& lb);
-  void set_ub(const std::vector<int>& ub);
+  void set_lb_ub(const std::vector<int>& lb, const std::vector<int>& ub);
   int lb(int d) const {return lb_[d];}
   int ub(int d) const {return ub_[d];}
   const std::vector<int>& lb() const {return lb_;}
@@ -105,6 +107,7 @@ private:
   const int nd_;
   std::vector<int> lb_, ub_; // lower and upper bounds of each dimension
   std::vector<int> ntypes_; // number of types for k-simplex
+  std::vector<int> dimprod_;
 
   // list of k-simplices types; each simplex contains k vertices
   std::vector<std::vector<std::vector<std::vector<int>>>> unit_simplices;
@@ -252,6 +255,22 @@ inline std::ostream& operator<<(std::ostream& os, const regular_simplex_mesh_ele
 #endif
   
   return os;
+}
+
+template <int nd> 
+std::tuple<std::array<int, nd>, int> regular_simplex_mesh_element::to_index() const
+{
+  std::array<int, nd> arr;
+  std::copy_n(corner.begin(), nd, corner.end());
+  return std::tuple<std::array<int, nd>, int>(arr, type);
+}
+
+template <int nd> 
+void regular_simplex_mesh_element::from_index(const std::tuple<std::array<int, nd>, int>& tuple)
+{
+  const std::array<int, nd> &arr = std::get<0>(tuple);
+  corner = std::vector<int>(arr.begin(), arr.end());
+  type = std::get<1>(tuple);
 }
 
 inline std::vector<regular_simplex_mesh_element> regular_simplex_mesh_element::sides() const
@@ -493,18 +512,15 @@ inline void regular_simplex_mesh::initialize_subdivision()
   // enumerate_unit_simplex_side_of(0, 0);
 }
 
-inline void regular_simplex_mesh::set_lb(const std::vector<int>& b)
+inline void regular_simplex_mesh::set_lb_ub(const std::vector<int>& l, const std::vector<int>& u)
 {
   lb_.resize(nd());
-  for (int i = 0; i < std::min(lb_.size(), b.size()); i ++)
-    lb_[i] = b[i];
-}
-
-inline void regular_simplex_mesh::set_ub(const std::vector<int>& b)
-{
   ub_.resize(nd());
-  for (int i = 0; i < std::min(ub_.size(), b.size()); i ++)
-    ub_[i] = b[i];
+  dimprod_.resize(nd());
+  for (int i = 0; i < nd(); i ++) {
+    lb_[i] = l[i];
+    ub_[i] = u[i];
+  }
 }
 
 inline regular_simplex_mesh::iterator regular_simplex_mesh::element_begin(int d)
