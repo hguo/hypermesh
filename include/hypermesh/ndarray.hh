@@ -11,7 +11,8 @@ struct ndarray {
   ndarray() {dims.fill(0); s.fill(0);}
   ndarray(const std::array<I, N> &dims) {resize(dims);}
 
-  const T* data() {return p.data();}
+  const T* data() const {return p.data();}
+  T* data() {return p.data();}
 
   void resize(const std::array<I, N> &dims_) {
     dims = dims_;
@@ -19,6 +20,11 @@ struct ndarray {
       if (i == 0) s[i] = 1;
       else s[i] = s[i-1]*dims[i-1];
     p.resize(s[N-1]*dims[N-1]);
+  }
+
+  template <typename T1, typename I1>
+  void resize(const ndarray<N, T1, I1>& a) {
+    resize(a.dims);
   }
 
   I index(const std::array<I, N>& idx) const {
