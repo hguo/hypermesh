@@ -70,6 +70,9 @@ struct ndarray {
   const T& operator()(size_t i0, size_t i1, size_t i2, size_t i3, size_t i4, size_t i5) const {return p[i0+i1*s[1]+i2*s[2]+i3*s[3]+i4*s[4]+i5*s[5]];}
   const T& operator()(size_t i0, size_t i1, size_t i2, size_t i3, size_t i4, size_t i5, size_t i6) const {return p[i0+i1*s[1]+i2*s[2]+i3*s[3]+i4*s[4]+i5*s[5]+i6*s[6]];}
 
+  T& operator[](size_t i) {return p[i];}
+  const T& operator[](size_t i) const {return p[i];}
+
 private:
   std::vector<size_t> dims, s;
   std::vector<T> p;

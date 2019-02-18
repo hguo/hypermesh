@@ -19,6 +19,7 @@ struct regular_simplex_mesh_element {
   regular_simplex_mesh_element(const regular_simplex_mesh &m, int d); 
   regular_simplex_mesh_element(const regular_simplex_mesh &m, int d, 
       const std::vector<int>& corner, int type); 
+  regular_simplex_mesh_element(const regular_simplex_mesh &m, int d, size_t i);
 
   regular_simplex_mesh_element& operator=(const regular_simplex_mesh_element& e);
   bool operator!=(const regular_simplex_mesh_element& e) const {return !(*this == e);}
@@ -36,7 +37,7 @@ struct regular_simplex_mesh_element {
   template <int nd> void from_index(const std::tuple<std::array<int, nd>, int>&);
 
   template <typename uint = uint64_t> uint to_integer() const;
-  template <typename uint = uint64_t> uint from_integer(uint i);
+  template <typename uint = uint64_t> void from_integer(uint i);
 
   std::vector<regular_simplex_mesh_element> sides() const;
   std::vector<regular_simplex_mesh_element> side_of() const;
@@ -131,6 +132,14 @@ inline regular_simplex_mesh_element::regular_simplex_mesh_element(
     const std::vector<int>& corner_, int type_)
   : m(m_), corner(corner_), dim(d_), type(type_)
 {
+}
+
+inline regular_simplex_mesh_element::regular_simplex_mesh_element(
+    const regular_simplex_mesh &m_, int d_, size_t i) : m(m_)
+{
+  dim = d_;
+  corner.resize(m.nd());
+  from_integer(i);
 }
 
 inline regular_simplex_mesh_element& regular_simplex_mesh_element::operator=(const regular_simplex_mesh_element& e)
@@ -234,6 +243,7 @@ inline std::ostream& operator<<(std::ostream& os, const regular_simplex_mesh_ele
     else os << "},";
   }
 
+  os << "int=" << e.to_integer() << ",";
   os << "valid=" << e.valid();
  
 #if 0
@@ -255,6 +265,27 @@ inline std::ostream& operator<<(std::ostream& os, const regular_simplex_mesh_ele
 #endif
   
   return os;
+}
+
+template <typename uint>
+uint regular_simplex_mesh_element::to_integer() const
+{
+  uint corner_index = 0;
+  for (size_t i = 0; i < m.nd(); i ++)
+    corner_index += corner[i] * m.dimprod_[i];
+  return corner_index * m.ntypes(dim) + type;
+}
+
+template <typename uint>
+void regular_simplex_mesh_element::from_integer(uint index)
+{
+  type = index % m.ntypes(dim);
+  uint corner_index = index / m.ntypes(dim); // m.dimprod_[m.nd()];
+
+  for (int i = m.nd() - 1; i >= 0; i --) {
+    corner[i] = corner_index / m.dimprod_[i];
+    corner_index -= corner[i] * m.dimprod_[i];
+  }
 }
 
 template <int nd> 
@@ -516,10 +547,16 @@ inline void regular_simplex_mesh::set_lb_ub(const std::vector<int>& l, const std
 {
   lb_.resize(nd());
   ub_.resize(nd());
-  dimprod_.resize(nd());
+  dimprod_.resize(nd()+1);
+
   for (int i = 0; i < nd(); i ++) {
     lb_[i] = l[i];
     ub_[i] = u[i];
+  }
+
+  for (int i = 0; i < nd()+1; i ++) {
+    if (i == 0) dimprod_[i] = 1;
+    else dimprod_[i] = (u[i-1] - l[i-1] + 1) * dimprod_[i-1];
   }
 }
 
