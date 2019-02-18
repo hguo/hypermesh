@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 22.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 251 101" style="enable-background:new 0 0 251 101;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#FFFFFF;stroke:#000000;stroke-miterlimit:10;}
+	.st1{fill:none;stroke:#000000;stroke-miterlimit:10;}
+	.st2{font-family:'ArialMT';}
+	.st3{font-size:9px;}
+</style>
+<g>
+	<rect x="7.3" y="11.7" class="st0" width="28.9" height="28.9"/>
+	<rect x="36.2" y="11.7" class="st0" width="28.9" height="28.9"/>
+	<rect x="65.1" y="11.7" class="st0" width="28.9" height="28.9"/>
+	<rect x="7.3" y="40.6" class="st0" width="28.9" height="28.9"/>
+	<rect x="36.2" y="40.6" class="st0" width="28.9" height="28.9"/>
+	<rect x="65.1" y="40.6" class="st0" width="28.9" height="28.9"/>
+	<rect x="7.3" y="69.5" class="st0" width="28.9" height="28.9"/>
+	<rect x="36.2" y="69.5" class="st0" width="28.9" height="28.9"/>
+	<rect x="65.1" y="69.5" class="st0" width="28.9" height="28.9"/>
+</g>
+<g>
+	<rect x="156.8" y="11.7" class="st0" width="28.9" height="28.9"/>
+	<rect x="185.7" y="11.7" class="st0" width="28.9" height="28.9"/>
+	<rect x="214.6" y="11.7" class="st0" width="28.9" height="28.9"/>
+	<rect x="156.8" y="40.6" class="st0" width="28.9" height="28.9"/>
+	<rect x="185.7" y="40.6" class="st0" width="28.9" height="28.9"/>
+	<rect x="214.6" y="40.6" class="st0" width="28.9" height="28.9"/>
+	<rect x="156.8" y="69.5" class="st0" width="28.9" height="28.9"/>
+	<rect x="185.7" y="69.5" class="st0" width="28.9" height="28.9"/>
+	<rect x="214.6" y="69.5" class="st0" width="28.9" height="28.9"/>
+	<line class="st1" x1="243.5" y1="11.7" x2="156.8" y2="98.4"/>
+	<line class="st1" x1="185.7" y1="98.4" x2="243.5" y2="40.6"/>
+	<line class="st1" x1="156.8" y1="69.5" x2="214.6" y2="11.7"/>
+	<line class="st1" x1="214.6" y1="98.4" x2="243.5" y2="69.5"/>
+	<line class="st1" x1="156.8" y1="40.6" x2="185.7" y2="11.7"/>
+</g>
+<g>
+	<g>
+		<g>
+			<line class="st1" x1="98.1" y1="55" x2="146.7" y2="55"/>
+			<g>
+				<path d="M152.7,55c-2.8,1.1-6.4,2.9-8.5,4.8l1.7-4.8l-1.7-4.8C146.3,52.2,149.9,54,152.7,55z"/>
+			</g>
+		</g>
+	</g>
+	<text transform="matrix(1 0 0 1 100.1373 49.1665)" class="st2 st3">subdivision</text>
+</g>
+<g>
+	<text transform="matrix(1 0 0 1 23.1359 8.4998)" class="st2 st3">regular_mesh</text>
+</g>
+<g>
+	<text transform="matrix(1 0 0 1 154.8797 8.4998)" class="st2 st3">regular_simplex_mesh</text>
+</g>
+</svg>
