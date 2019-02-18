@@ -12,6 +12,7 @@ struct ndarray {
   ndarray(const std::vector<size_t> &dims) {reshape(dims);}
 
   size_t nd() const {return dims.size();}
+  size_t dim(size_t i) const {return dims[i];}
   std::vector<size_t> shape() const {return dims;}
 
   const T* data() const {return p.data();}
