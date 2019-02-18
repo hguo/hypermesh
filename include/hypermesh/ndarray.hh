@@ -29,6 +29,11 @@ struct ndarray {
     p.resize(s[nd()-1]*dims[nd()-1]);
   }
 
+  void reshape(const std::vector<size_t> &dims, T val) {
+    reshape(dims);
+    std::fill(p.begin(), p.end(), val);
+  }
+
   size_t index(const std::vector<size_t>& idx) const {
     size_t i(idx[0]);
     for (size_t j = 1; j < nd(); j ++)
