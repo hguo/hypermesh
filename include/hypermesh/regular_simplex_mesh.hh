@@ -7,6 +7,7 @@
 #include <set>
 #include <algorithm>
 #include <numeric>
+#include <thread>
 #include <cassert>
 
 namespace hypermesh {
@@ -60,7 +61,7 @@ struct regular_simplex_mesh {
   }
   int nd() const {return nd_;}
   int ntypes(int d) const {return ntypes_.at(d);}
-  int n(int d) const; // number of elements
+  size_t n(int d) const; // number of elements
 
   std::vector<std::vector<int>> unit_simplex(int d, int t) const {return unit_simplices[d][t];}
 
@@ -72,6 +73,9 @@ struct regular_simplex_mesh {
 
   iterator element_begin(int d);
   iterator element_end(int d);
+
+  void element_for(int d, std::function<void(regular_simplex_mesh_element)> f, 
+      int nthreads=std::thread::hardware_concurrency());
 
 private: // initialization functions
   void initialize_subdivision();
@@ -574,6 +578,28 @@ inline regular_simplex_mesh::iterator regular_simplex_mesh::element_end(int d)
   // e.type = ntypes(d) - 1;
   e.type = ntypes(d); // the invalid type id combines with the ub corner encodes the end.
   return e;
+}
+
+inline size_t regular_simplex_mesh::n(int d) const
+{
+  return (size_t)ntypes(d) * dimprod_[nd()];
+}
+
+inline void regular_simplex_mesh::element_for(int d, std::function<void(regular_simplex_mesh_element)> f, int nthreads)
+{
+  const size_t ntasks = n(d);
+  std::vector<std::thread> workers;
+
+  for (size_t i = 0; i < nthreads; i ++) {
+    workers.push_back(std::thread([this, i, ntasks, nthreads, d, f]() {
+      for (size_t j = i; j < ntasks; j += nthreads) {
+        regular_simplex_mesh_element e(*this, d, j);
+        f(e);
+      }
+    }));
+  }
+
+  std::for_each(workers.begin(), workers.end(), [](std::thread &t) {t.join();});
 }
 
 }
