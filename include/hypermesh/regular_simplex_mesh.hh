@@ -276,7 +276,7 @@ uint regular_simplex_mesh_element::to_integer() const
 {
   uint corner_index = 0;
   for (size_t i = 0; i < m.nd(); i ++)
-    corner_index += corner[i] * m.dimprod_[i];
+    corner_index += (corner[i] - m.lb(i)) * m.dimprod_[i];
   return corner_index * m.ntypes(dim) + type;
 }
 
@@ -287,9 +287,15 @@ void regular_simplex_mesh_element::from_integer(uint index)
   uint corner_index = index / m.ntypes(dim); // m.dimprod_[m.nd()];
 
   for (int i = m.nd() - 1; i >= 0; i --) {
-    corner[i] = corner_index / m.dimprod_[i];
+    corner[i] = corner_index / m.dimprod_[i]; 
     corner_index -= corner[i] * m.dimprod_[i];
   }
+  for (int i = 0; i < m.nd(); i ++) 
+    corner[i] += m.lb(i);
+
+  // fprintf(stderr, "dimprod=%d, %d, %d, %d\n", m.dimprod_[0], m.dimprod_[1], m.dimprod_[2], m.dimprod_[3]);
+  // fprintf(stderr, "lb=%d, %d, %d\n", m.lb(0), m.lb(1), m.lb(2));
+  // std::cerr << "idx=" << index << "," << *this << std::endl;
 }
 
 template <int nd> 
