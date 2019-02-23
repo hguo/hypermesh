@@ -17,3 +17,8 @@ The library is still under development.  Stay tuned.
 * (TODO) *n*-simplex-*m*-prism mesh in arbitrary dimensions, e.g.
   * 2-simplex-1-prism mesh that generalizes given triangular mesh into 3D
   * 3-simplex-1-prism mesh that generalize given tetrahedral mesh into 4D
+
+
+## Regular Mesh and Regular Simplex Mesh
+
+![](./docs/images/regular_simplex_subdivision.svg)
