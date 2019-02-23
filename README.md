@@ -1,5 +1,7 @@
 # Hypermesh: Meshing The High-Dimensional Spaces for Data Analysis and Visualization
 
+![](./docs/images/regular_simplex_subdivision.svg)
+
 Hypermesh is a header-only C++17 library that meshes high-dimensional spaces for data analysis and visualization, such as feature extraction and tracking (see [FTK, the feature tracking kit](https://github.com/hguo/ftk)), flow map computation, and topology analysis. 
 
 The library is still under development.  Stay tuned. 
@@ -19,6 +21,3 @@ The library is still under development.  Stay tuned.
   * 3-simplex-1-prism mesh that generalize given tetrahedral mesh into 4D
 
 
-## Regular Mesh and Regular Simplex Mesh
-
-![](./docs/images/regular_simplex_subdivision.svg)
